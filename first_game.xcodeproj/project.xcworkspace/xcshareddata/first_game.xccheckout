@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>75DB0CE7-C773-4068-8874-1199D58F9504</string>
+	<key>IDESourceControlProjectName</key>
+	<string>first_game</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>1C4990AD2F0ADA19D57BFC93668C000361538D01</key>
+		<string>https://github.com/ngocthang/first_swift_game.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>first_game.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>1C4990AD2F0ADA19D57BFC93668C000361538D01</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/ngocthang/first_swift_game.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>1C4990AD2F0ADA19D57BFC93668C000361538D01</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>1C4990AD2F0ADA19D57BFC93668C000361538D01</string>
+			<key>IDESourceControlWCCName</key>
+			<string>first_swift_game</string>
+		</dict>
+	</array>
+</dict>
+</plist>
