@@ -74,16 +74,35 @@ Tiếp theo ta sẽ khai báo 1 số logic cho <b>GameViewController.swift<b/><b
 ![Image]
 (http://i.gyazo.com/e8e6c99b576cb4db04536b13e634871c.png)
 
+- Chúng ta khai báo biến `scene`: <b>var scene: GameScene!</b>. `var` dùng để khai báo biến, `GameScene` là kiểu hữ liệu, dấu `!` cho chúng ta biết biến này ko phải là giá trị optional mà nó sẽ đươcn khởi tạo sau đó.<br />
+- Trong <b>viewDidLoad()</b> chúng ta gán giá trị cho <b>scene</b> với initializer chúng ta đã khai báo trong <b>GameScene.swift</b>.<br />
+- CHúng ta thử chạy lại ứng dụng để xem background xuất hiện:<br />
 
+![Image]
+(http://i.gyazo.com/a3c318996ecf759c702f23796d5375eb.png)
 
+## Set vị trí cho đối tượng bằng array
 
+- Giống như các ngôn ngữ lập trình khác, array được sử dụng dụng trong hầu như mọi project. Trong game Tetris này, chúng ta sẽ sử dụng array để xác định các vị trí của các đối tượng, cụ thể là bằng các hàng và cột.<br />
 
+![Image]
+(http://i.gyazo.com/787c6eccb8df46d0e32051d81ba8660b.png)
 
+- 20 hàng và 10 cột sẽ tạo ra 200 vị trí để các thanh xếp hình xuất hiện.Chúng ta khai báo mảng 2 chiều <b>array[column, row]</b>.<br />
+- Chúng ta sẽ tạo 1 file mới (nhấn <b> ⌘ + N) </b>, chọn Swift file , <b>next</b> và đặt tên file là Array2D rồi <b>Create</b>( chú ý nhớ đánh dấu vào thư mục `first_game`)<br />
 
+![Image]
+(http://i.gyazo.com/9eeb33d10a4599fb399243fa448e2753.png)
 
+- Tiếp tục viết code cho array2D và cùng tìm hiểu ý nghĩa của những đoạn code dưới đây<br />
 
+![Image]
+(http://i.gyazo.com/937acdaac55fbfe4ac4eccd998ca7c01.png)
 
+- Trong đoạn code đầu tiên `#1` , ta khai báo class <b>Array2D</b>. Thông thường thì không cần khai báo class vì trong Swift, array là 1 kiểu <b>struct</b>, tuy nhiên trong trường hợp này ta khai bao class vì các đối tượng class được truyền thông qua các <b>reference</b> trong khi structure được truyền theo các giá trị.Game của chúng ta sẽ yêu cầu 1 cấu trúc dữ liệu như vậy để sử dụng trong toàn bộ game. Chú yas rằng ở đây khi khai báo class, chúng ta có thêm 1 param `<T>`. Nó cho phép chúng ta khai báo 1 mảng có thể chứa bất kỳ loại dữ liệu nào nên có thể sử dụng ở nhiều chỗ khác nữa.<br />
 
+- Trong đoạn code thứ 2 `#2`, ta khai báo 1 array, nó sẽ là 1 cấu trúc dữ liệu được dùng nhiều chỗ trong poẹct này. Để ý thấy `<T?>` khi khai báo array, dấu <b>?</b> đánh dấu 1 giá trị tuỳ chọn. 1 Giá trih tuỳ chọn có thể có hoặc ko có dữ liệu, ó thể nil, empty. Cụ thể trong project này, 1 array nil có nghĩa là ko có 1 khối xếp hình nào xuất hiện trên màn hình.<br />
 
+- Trong đoạn code thứ 3 `#3`, ta set cấu trúc cho mảng với size là hàng * cột,đảm bảo rằng <b>array2D</b> có thể chứa đc 200 object (10*20).<br />
 
-
+- Đoạn code cuối cùng `#4`, ta tạo custom subscript cho <b>Array2D</b>, cụ thể là 1 subscript cho array[column, row].  
