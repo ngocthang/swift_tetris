@@ -106,3 +106,62 @@ Tiếp theo ta sẽ khai báo 1 số logic cho <b>GameViewController.swift<b/><b
 - Trong đoạn code thứ 3 `#3`, ta set cấu trúc cho mảng với size là hàng * cột,đảm bảo rằng <b>array2D</b> có thể chứa đc 200 object (10*20).<br />
 
 - Đoạn code cuối cùng `#4`, ta tạo custom subscript cho <b>Array2D</b>, cụ thể là 1 subscript cho array[column, row].  
+
+##Tạo chuyển động cho đối tượng
+- Như những version game tetris bạn đã từng chơi trước đây, bạn sẽ chờ đợi từng khối rơi xuống theo mỗi khoảng thời gian nhất định và sẽ rơi với tốc độ từ chậm đến nhanh dần tuỳ theo từng level, tất nhiên khi chúng rơi, bạn không thể dừng chúng lại được. Và game Tetris cũng sẽ tạo chuyển động giống như vậy.
+
+- Chúng ta sẽ cần 1 class mở rộng của lớp `SKScene` kế thừa function `update(currentTime:CFTimeInterbval)`. Function `update` được các frame gọi liên tục. Mỗi frame có thể hiểu như 1 khối hình xuất hiện trên màn hình. Để game có chuyển động trơn tru thì ta cần thiết lập giá trị frame rate càng cao càng tốt, cỡ khoảng 60 hình trên giây hoặc cao hơn. 
+
+- Khi mắt chúng ta cảm nhận được từng frame đang chuyển động thì ta sẽ thấy game chuyển động một cách chậm chạp. Đây gọi là khái niệm chuyển động gián đoạn. Dưới đây là ví dụ về chuyển động của game theo các giá trị frame rate khác nhau
+
+![Image](http://bloc-books.s3.amazonaws.com/swiftris/05-a-ticking-clock-frame-rate-comparison.gif)
+
+- Bây giờ chúng ta cùng viết tiếp code cho `GameScene.swift`:
+
+![Image](http://i.gyazo.com/bcb4089445fd39af4c0306b1d1e5aa8c.png)
+
+1. Trước tiên trong `#1` chúng ta định nghĩa 1 constant `TickLengthLevelOne`. Constant này sẽ biểu thị tốc độ chậm nhất mà các khối hình rơi xuống. Như trong code, ta đã set cho nó giá trị là `600` mili giây - nghĩa là cứ 0.6 giây thì khối hình sẽ rơi xuống 1 hàng.
+
+2. Ở `#2` chúng ta khai báo biến. `tickLengthMillis` và `lastTick` được khai báo giống như chúng ta đã khai báo biến trong bài trước. `tickLengthMillis` biểu thị tốc độ rơi hiện tại của `GameScene` được gán bằng giá trị mặc định là constant `TickLengthLevelOne` chúng ta khai báo ở trên còn biến `lastTick` sẽ là tốc độ rơi nhanh nhất của khối hình, được gán bằng 1 đối tượng `NSDate`.
+
+Tuy nhiên, dòng khai báo `var tick:(() -> ())?` nhìn có vẻ khá phức tạp. Ở đây `tick` được coi như `closure` trong swift, kiểu của nó là `(() -> ())?` , điều đó có nghĩa là nó là closure và không cần truyền parameter và cũng không cần trả ra dữ liệu. Dấu `?` có nghĩa là nó có giá trị optional và có thể `nil`.
+
+3. Trong `#3` , ta thêm một số logic cho những biến đã khai báo ở trên. Nếu `lastTick` bị missing thì game ở trạng thái pause, không có bất cứ chuyển động nào của khối hình vì vậy đơn giản chỉ cần return ở đây. Tuy nhiên nếu `lastTick` có giá trị, chúng ta thiết lập giá trị thời gian được thực thi của hàm `update` bằng cách gọi function `timeIntervalSinceNow` trong đối tượng `lastTick`. Trong Swift, để gọi hàm trong đối tượng thì ta dùng dấu chấm `.`
+
+Ở đây, khi gọi function ta thấy có xuất hiện dấu chấm than `!`. Ký hiệu này được dùng khi đối tượng gọi hàm là có kiểu `optional`. Sau khi gọi function `timeIntervalSinceNow`, ta nhân kết quả với `-1000` để nhận giá trị dương tính theo mili giây.
+
+Tiếp theo, ta kiểm tra nếu time được truyền mà vượt quá giá trị của `tickLengthMillis`, cứ mỗi khoảng thời gian trôi qua bằng giá trị của `timePassed` thì ta phải cập nhật lại vị trí của khối hình. Để làm được điều này, trước tiên ta cập nhật giá trị `lastTick` bằng thời gian hiện tại, sau đó ta gọi đến closure `tick?()`. Ở đây ta dùng dấu `?` sau tên biến để check xem nó có giá trị hay không trước tiên, nếu có thì mới gọi nó và không có parameter. Thực ra đây chỉ là cách viết tắt, nếu viết tường minh ra thì nó sẽ tương dương với đoạn code:
+```
+if tick != nil {
+tick!()
+}
+
+```
+
+4. Đoạn `#4`, ta khai báo các phương thức để cho phép các class bên ngoài có thể stop và start chuyển động của khối hình. 
+
+##Block party
+- Trong lập trình nói chung, chúng ta sử dụng class để mô tả các đối tượng. Trong game của chúng ta, những đối tượng chính là những khối hình và mỗi khối hình bao gồm 4 phần độc lập nhau và hãy mô tả chúng như những đối tượng. Ta sẽ thực hiện bằng cách tạo một class mới `Block`. Tạo file `Block.swift` như ta đã làm với `Array2D.swift`. Bây giờ ta khai báo class và thêm một số đoạn mã cho `Block.swift`
+
+![Image](http://i.gyazo.com/11adca755286b15d0dcca285a3dad413.png)
+
+- Nhìn đoạn code trên ta có thể dễ dàng nhận thấy đó không phải tất cả những gì cần khai báo để mô tả khối hình. Trong phần đầu tiên, ta định nghĩa 1 `enumeration` là `BlockColor` và game của chúng ta sẽ hộ trợ tổng cộng 6 màu.
+
+1. Trong đoạn code đầu tiên `#1`, ta khai báo rằng game của chúng ta sẽ có tổng cộng 6 màu.
+
+2. Trong đoạn `#2`, ta khai báo `enumeration` với kiểu `Int` nó implement protocol `Printable` 
+
+Class, Struc và enum implement `Printable` có khả năng tạo ra 1 chuỗi mà ta có thể đọc được trong quá trình debug hoặc in giá trị lên màn hình console.
+
+3. Đoạn `#3` ta khai báo đầy đủ danh sách những option của enumerable, biểu thị cho các màu ứng với giá trị 0 cho màu xanh biển cho đến giá trị 5 cho màu vàng.
+
+4. Đoạn `#4` ta định nghĩa 1 bộ các thuộc tính `spriteName` gọi là `computed property`. 1 `computed property` hoạt động giống như 1 biến thông thường nhưng khi truy cập nó, cả 1 block code được gọi để đưa ra kết quả của nó.
+
+`spriteName` sẽ trả về đúng tên file ứng với màu sắc, ở đây ta dùng `switch...case` để thực hiện.
+
+5. Đoạn `#5` , ta định nghĩa 1 `computer property` khác : `description`. Thuộc tính này là bắt buộc nếu như ta tuân theo giao thức `Printable`.
+
+Không có thuộc tính này thì code của chúng ta sẽ bị fail. Ở đây nó đơn giản chỉ trả về `spriteName` của màu sắc và như vậy là đủ để mô tả đối tượng.
+
+6. Cuối cùng, đoạn số 6, ta định nghĩa 1 static function có tên là `random()`. Function naỳ sẽ trả về 1 giá trị ngẫu nhiên được tìm thấy trong `BlockColor`. Ta tạo 1 `BlockColor` sử dụng  khởi tạo : `răValue:Int` để thiết lập 1 enumeration được gán các giá trị số. Ở đây các giá trị đó là từ 0 -> 5.
+

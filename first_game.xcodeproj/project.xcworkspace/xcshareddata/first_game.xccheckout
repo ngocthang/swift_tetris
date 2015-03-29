@@ -12,20 +12,24 @@
 	<dict>
 		<key>1C4990AD2F0ADA19D57BFC93668C000361538D01</key>
 		<string>https://github.com/ngocthang/first_swift_game.git</string>
+		<key>93DC14AC61A8FAA9A959EBEEA532BB3933FA0B57</key>
+		<string>https://github.com/ngocthang/swift_tetris.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
 	<string>first_game.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>1C4990AD2F0ADA19D57BFC93668C000361538D01</key>
+		<string>../../../first_swift_game</string>
+		<key>93DC14AC61A8FAA9A959EBEEA532BB3933FA0B57</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>https://github.com/ngocthang/first_swift_game.git</string>
+	<string>https://github.com/ngocthang/swift_tetris.git</string>
 	<key>IDESourceControlProjectVersion</key>
 	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>1C4990AD2F0ADA19D57BFC93668C000361538D01</string>
+	<string>93DC14AC61A8FAA9A959EBEEA532BB3933FA0B57</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
 		<dict>
@@ -35,6 +39,14 @@
 			<string>1C4990AD2F0ADA19D57BFC93668C000361538D01</string>
 			<key>IDESourceControlWCCName</key>
 			<string>first_swift_game</string>
+		</dict>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>93DC14AC61A8FAA9A959EBEEA532BB3933FA0B57</string>
+			<key>IDESourceControlWCCName</key>
+			<string>swift_tetris</string>
 		</dict>
 	</array>
 </dict>
