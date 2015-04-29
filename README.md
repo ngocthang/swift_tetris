@@ -165,3 +165,194 @@ Không có thuộc tính này thì code của chúng ta sẽ bị fail. Ở đâ
 
 6. Cuối cùng, đoạn số 6, ta định nghĩa 1 static function có tên là `random()`. Function naỳ sẽ trả về 1 giá trị ngẫu nhiên được tìm thấy trong `BlockColor`. Ta tạo 1 `BlockColor` sử dụng  khởi tạo : `răValue:Int` để thiết lập 1 enumeration được gán các giá trị số. Ở đây các giá trị đó là từ 0 -> 5.
 
+
+
+- ta sẽ tiếp tục xử lý để màu sắc xuất hiện trong game theo ý muốn. Ta sẽ xử lý trong `Block.swift`. Hãy xem đoạn code dưới đây
+
+![image](http://i.gyazo.com/ac3e6e4da22b1856ff37151c7118f2f7.png)
+
+1. đầu tiên ta khai báo class `Block` implement 2 protocol `Hashable` và `Printable`. Trong đó `Block` được lưu trong `Array2D` thông qua `Hashable` 
+2. Đoạn `#2`,  ta định nghĩa thuộc tính `color`.
+3. Đoạn `#3`, ta định nghĩa các biến `column` và `row` (hàng và cột). Những thuộc tính này để xác định vị trí của Block trên màn hình. `SKSpriteNode` sẽ mô tả các yêu tố liên quan đến hình ảnh của mỗi Block và sẽ được dùng thông qua `GameScene` mỗi khi có bất cứ chuyển động nào của Block.
+4. Đoạn `#4` ta khai báo 1 shorstcut name của sprite. Từ giờ ta có thể gọi `block.spriteName` gắn gọn hơn `block.color.spriteName`.
+5. Đoạn `#5` ta khai báo 1 implement `hasValue` để thực hiện tính toán các thuộc tính, giá trị trả về là kết quả của phép XOR giữa `row` và `column`, ta nhận đc 1 giá trị integer duy nhất cho mỗi Block
+6. Đoạn 6, ta khai báo implement `description`.Mỗi đối tượng của `Printable` có thể nằm trong string và bao quanh bởi `\(` và `)`. Ví dụ 1 block màu xanh ở vị trí hàng số 3, cột số 8 thì `blue:[8, 3]` sẽ biểu diễn block đó.
+7. Cuối cùng, đoạn số `#7` ta dùng toán tử `==` để so sánh các block với nhau. Giá trị trả về là `true` nếu và chỉ nếu 2 block cùng vị trí và màu sắc.
+
+##Tạo hình dạng cho Block
+
+![Image](http://i.gyazo.com/699acb013ea3160711bc16229a9d798e.png)
+
+- phần trước ta đã xây dựng và thiết lập các thuộc tính liên quan đến màu sắc cho Block, tiếp theo ta sẽ tạo hình thù cho chúng. Ta sẽ tạo những Block với dạng  [Tetromino](http://en.wikipedia.org/wiki/Tetromino) Tetromino trong class `Shape`. Tạo file Sharp.swift ( giống như đã tạo Block.swift).Mở file `Shape.swift`, trước tiên, xoá hết những đoạn code mà xcode tự generate ra. Như với các file khác, ta cần import thư viện `SpriteKit`
+```Swift
+import SpriteKit
+```
+- tiếp theo ta khai báo 1 bộ dữ liệu liệt kê enum để định nghĩa các hướng xoay của khối hình. Mỗi khối hình có thể xoay 4 hướng để rơi xuống, ta sẽ quy định là 4 góc `0`, `90`, `180`, và `270`.Ta có thể tưởng tượng như 4 góc của 1 chiếc đồng hồ như hình dưới đây
+
+![image](http://bloc-books.s3.amazonaws.com/swiftris/07-giving-shape-rotation-degrees.png)
+
+```Swift
+enum Orientation: Int, Printable {
+case Zero = 0, Ninety, OneEighty, TwoSeventy
+
+var description: String {
+switch self {
+case .Zero:
+return "0"
+case .Ninety:
+return "90"
+case .OneEighty:
+return "180"
+case .TwoSeventy:
+return "270"
+}
+}
+}
+```
+
+- Tiếp theo ta khai báo 1 function để tính toán và trả ra gián trị góc của khối hình khi ta điều khiển thay đổi góc của nó.
+
+```Swift
+static func rotate(orientation:Orientation, clockwise: Bool) -> Orientation {
+var rotated = orientation.rawValue + (clockwise ? 1 : -1)
+if rotated > Orientation.TwoSeventy.rawValue {
+rotated = Orientation.Zero.rawValue
+} else if rotated < 0 {
+rotated = Orientation.TwoSeventy.rawValue
+}
+return Orientation(rawValue:rotated)!
+}
+```
+
+- tiếp theo ta sẽ khai báo 1 số constant. 
+
+```Swift
+// The number of total shape varieties
+let NumShapeTypes: UInt32 = 7
+
+// Shape indexes
+let FirstBlockIdx: Int = 0
+let SecondBlockIdx: Int = 1
+let ThirdBlockIdx: Int = 2
+let FourthBlockIdx: Int = 3
+```
+
+- định nghĩa class `Shape` cùng các thuộc tính như màu sắc, vị trí(hàng cột), orientation và mảng những block
+
+```Swift
+class Shape: Hashable, Printable {
+// The color of the shape
+let color:BlockColor
+
+// The blocks comprising the shape
+var blocks = Array<Block>()
+// The current orientation of the shape
+var orientation: Orientation
+// The column and row representing the shape's anchor point
+var column, row:Int
+}
+```
+- Bước kế tiếp, ta định nghĩa 2 thuộc tính tính toán và chúng trả ra kết quả rỗng, 2 thuộc tính này đc override bởi các class hình dạng của block sẽ đc thêm vào dưới đây.
+
+```Swift
+// Subclasses must override this property
+var blockRowColumnPositions: [Orientation: Array<(columnDiff: Int, rowDiff: Int)>] {
+return [:]
+}
+// Subclasses must override this property
+var bottomBlocksForOrientations: [Orientation: Array<Block>] {
+return [:]
+}
+```
+- `blockRowColumnPositions` định nghĩa 1 `Dictionary`. `dictionary` trong swift được khai báo bằng ngoặc vuông với các bộ key:value, mỗi bộ được phân tách nhau bằng dấu hai chấm. Việc truy xuất phần tử trong Dictionary cũng giống như truy xuất mảng và chúng ta sẽ dùng `key` để truy xuất. Trong trường hợp này, key của `blockRowColumnPositions` sẽ là những đối tượng `Orientation` và value của nó là 1 mảng `Array<(columnDiff: Int, rowDiff: Int)>`. 
+- Trong swift thì mảng là 1 `tuple`(1 bộ dữ liệu). Thông thường thì ta hay sử dụng 1 `tuple` để truyền hoặc trả về nhiều giá trị 1 lúc.Mỗi tuple thì chúng ta có thể truyền ko giới hạn phần tử. Trường hợp của chúng ta đã khai báo thì tuple có 2 phần tử `columnDiff` và `rowDiff` đều có kiểu `Int`. Dưới đây là ví dụ việc truy xuất phần tử của 1 dictionary
+
+```Swift
+let arrayOfDiffs = blockRowColumnPositions[Orientation.0]!
+let columnDifference = arrayOfDiffs[0].columnDiff
+```
+- Vì các phần tử trong dictionary có giá trị mặc định là optional do đó ta phải thêm `!` vào cuối câu lệnh truy xuất để có thể access được dictionary. Để truy xuất giá trị `columnDiff` của phần tử đầu tiên , ta đánh index phần tử đầu tiên của mảng từ 0 và dùng dấu chấm `.` để lấy được giá trị mong muốn.
+- Tiếp theo ta khai báo 1 thuộc tính tính toán để trả ra vị trí đáy của block với hướng hiện tại của nó. 
+
+```Swift
+var bottomBlocks:Array<Block> {
+if let bottomBlocks = bottomBlocksForOrientations[orientation]
+{
+return bottomBlocks
+}
+return []
+}
+
+```
+
+- tiếp dến ta sử dụng 1 dạng đặc biệt của initializer đó là `convenience` initializer. Mục đích của nó là làm rút gọn việc khởi tạo `users` cho class `Shape`. Nó gán các giá trị hàng và cột trong khi lấy ngẫu nhiên các giá trị màu sắc và hướng.
+
+```Swift
+convenience init(column:Int, row:Int) {
+self.init(column:column, row:row, color:BlockColor.random(), orientation:Orientation.random())
+}
+```
+
+- Ta cần khai báo thêm 1 `final` function và các class con không thể override phương thức này. Trong function ta thực hiện kiểm tra điều kiện, ta gán `blockRowColumnTranslations` vào mảng từ kết quả trả ra của bộ thuộc tính tính toán (`dictionary property`). Nếu `blockRowColumnTranslations` not found thì các câu lệnh bên trong `if` sẽ không được thực thi.
+
+```Swift
+final func initializeBlocks() {
+if let blockRowColumnTranslations = blockRowColumnPositions[orientation] {
+for i in 0..<blockRowColumnTranslations.count {
+let blockRow = row + blockRowColumnTranslations[i].rowDiff
+let blockColumn = column + blockRowColumnTranslations[i].columnDiff
+let newBlock = Block(column: blockColumn, row: blockRow, color: color)
+blocks.append(newBlock)
+}
+}
+}
+```
+
+Cách viết tường minh hơn:
+
+```Swift
+let blockRowColumnTranslations = blockRowColumnPositions[orientation]
+if blockRowColumnTranslations != nil {
+// Code…
+}
+```
+
+###Các class con
+Trên đây ta đã tạo 1 base class, có thể coi nó như 1 công cụ để gọi và xử lý các khôi hình, và với mỗi dạng khối hình ta cần khai báo 1 class cho nó. Có tổng cộng 7 class con như vậy và ta phải tạo 7 file. 
+
+- Đầu tiên là khối hình vuông, ta tạo file `SquareShape.swift` và khai báo class `SquareShape`. Bên trong class, ta khai báo khoảng cách giữa các cạnh ( thông qua 2 chỉ số row và column) và hướng quay của khối hình (`orientation`). Có thể thấy, hình vuông là đơn giản nhất, ta coi như giá trị orientation không đổi khi nó quay theo mọi hướng. Ta quy định hình dạng của khôi hình vuông ứng với vị trí như sau
+
+```
+| 0•| 1 |
+| 2 | 3 |
+```
+
+do đó, đáy của hình vuống luôn là vị trí thứ 3 và 4 trong block.
+
+![Image](http://i.gyazo.com/7faf1166d16e7468b1a10912fb70633e.png)
+
+- ta thực hiện override bộ thuộc tính tính toán `blockRowColumnPositions` để đưa ra bộ dữ liệu hoàn chỉnh cho hình dạng khối hình vuông. Mỗi chỉ số của mảng tương ứng với góc của khối. ví dụ, góc trên bên trái ứng với giá trị 0 trong block ta quy định bên trên, bộ giá trị của nó sẽ là (0,0) ứng với (column, row). Tương tự, góc trên bên phải sẽ là (1, 0).
+- cuối cùng, ta cũng thực hiện override tương tự để đưa ra bộ dữ liệu cho đáy hình vuông, cũng là để xác định hướng xoay của khối hình. Và với hình vuông thì vị trí đáy luôn cố định là block số 3 và 4 trong khối hình quy dịnh bên trên. 
+```Swift
+class SquareShape:Shape {
+override var blockRowColumnPositions: [Orientation: Array<(columnDiff: Int, rowDiff: Int)>] {
+return [
+Orientation.Zero: [(0, 0), (1, 0), (0, 1), (1, 1)],
+Orientation.OneEighty: [(0, 0), (1, 0), (0, 1), (1, 1)],
+Orientation.Ninety: [(0, 0), (1, 0), (0, 1), (1, 1)],
+Orientation.TwoSeventy: [(0, 0), (1, 0), (0, 1), (1, 1)]
+]
+}
+
+override var bottomBlocksForOrientations: [Orientation: Array<Block>] {
+return [
+Orientation.Zero:       [blocks[ThirdBlockIdx], blocks[FourthBlockIdx]],
+Orientation.OneEighty:  [blocks[ThirdBlockIdx], blocks[FourthBlockIdx]],
+Orientation.Ninety:     [blocks[ThirdBlockIdx], blocks[FourthBlockIdx]],
+Orientation.TwoSeventy: [blocks[ThirdBlockIdx], blocks[FourthBlockIdx]]
+]
+}
+}
+```
+
+
