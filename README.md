@@ -355,4 +355,213 @@ Orientation.TwoSeventy: [blocks[ThirdBlockIdx], blocks[FourthBlockIdx]]
 }
 ```
 
+- ta sẽ thực hiện việc xử lý cho các khối hình này rơi xuống theo ý user để ghi điểm. Để làm được việc này, trước tiên ta thêm một số phương thức trong `Shape.swift` để khởi tạo và cập nhật vị trí của các Block.
+
+- Trước tiên, ta thêm vào 1 bộ toán tử enum để lặp các phần tử trong mảng bằng cách thêm 1 biến chỉ số `idx` cũng như giá trị ứng với chỉ số đó: `(columnDiff:Int, rowDiff:Int)`. Ta thực hiện lặp các block và gán cho chúng giá trị hàng và cột dựa trên các translation được cung cấp bởi class con Tetromino.
+
+```Swift
+final func rotateBlocks(orientation: Orientation) {
+if let blockRowColumnTranslation:Array<(columnDiff: Int, rowDiff: Int)> = blockRowColumnPositions[orientation] {
+for (idx, diff) in enumerate(blockRowColumnTranslation) {
+blocks[idx].column = column + diff.columnDiff
+blocks[idx].row = row + diff.rowDiff
+}
+}
+}
+```
+
+- Tiếp theo ta sử dụng 1 phương thức đơn giản `shiftBy(columns: Int, rows: Int)` để thay đổi hàng và cột thông qua các giá trị tương ứng là `rows` và `column`.
+
+```Swift
+final func shiftBy(columns: Int, rows: Int) {
+self.column += columns
+self.row += rows
+for block in blocks {
+block.column += columns
+block.row += rows
+}
+}
+```
+
+Bây giờ, ta sẽ tạo 1 bộ cập nhật vị trí thông qua ccs giá trị `row` và `column` trước khi quay các khối đến hướng mới và cập nhật lại các giá trị thuộc tính hàng và cột.
+
+```Swift
+final func moveTo(column: Int, row:Int) {
+self.column = column
+self.row = row
+rotateBlocks(orientation)
+}
+
+```
+
+Kế tiếp, ta cần thêm 1 phương thức để tạo ra 1 block Tetromino ngẫu nhiên và chúng ta sử dụng các class con kế thừa từ initializers của class cha.
+
+```Swift
+final class func random(startingColumn:Int, startingRow:Int) -> Shape {
+switch Int(arc4random_uniform(NumShapeTypes)) {
+case 0:
+return SquareShape(column:startingColumn, row:startingRow)
+case 1:
+return LineShape(column:startingColumn, row:startingRow)
+case 2:
+return TShape(column:startingColumn, row:startingRow)
+case 3:
+return LShape(column:startingColumn, row:startingRow)
+case 4:
+return JShape(column:startingColumn, row:startingRow)
+case 5:
+return SShape(column:startingColumn, row:startingRow)
+default:
+return ZShape(column:startingColumn, row:startingRow)
+}
+}
+```
+
+Bây giờ ta sẽ tạo 1 class để quản lý toàn bộ ligic của game, có thể coi như bộ não đứng đằng sau tất cả hoạt đôngj của game. Ta sẽ tạo 1 file mới đặt tên là `Swiftris.swift`, bên trong ta khai báo một số constant cùng với class `Swiftris` :
+
+```Swift
+let NumColumns = 10
+let NumRows = 20
+
+let StartingColumn = 4
+let StartingRow = 0
+
+let PreviewColumn = 12
+let PreviewRow = 1
+
+class Swiftris {
+var blockArray:Array2D<Block>
+var nextShape:Shape?
+var fallingShape:Shape?
+
+init() {
+fallingShape = nil
+nextShape = nil
+blockArray = Array2D<Block>(columns: NumColumns, rows: NumRows)
+}
+
+func beginGame() {
+if (nextShape == nil) {
+nextShape = Shape.random(PreviewColumn, startingRow: PreviewRow)
+}
+}
+}
+```
+
+Đoạn code trên ta đã khai báo 1 số hằng số và method quan trọng mà lớp `GameViewController` cần dùng đến.Những hằng số mà ta đã định nghĩa là số hàng, số cột , vị trí của khối hình bắt đầu rơi xuống và vị trí của khối hình trước đó đã rơi xuống. Chúng ta khai báo class `Swiftris` trong đó có khai báo các biến kèm theo kiểu dữ liệu của chúng. Ngoài ra ta đã khởi tạo các giá trị `fallingShape`, `nextShape` và `blockArray` kèm theo function `beginGame` để tạo những khối hình tiếp theo sau khi khôi hình trước đó đã rơi xuống.
+
+Tiếp theo ta sẽ khai báo function để gán giá trị khối tiếp theo `newShape` và khối đã rơi trước đó `fallingShape`. Vị trí của khối tiếp theo sẽ được tính ngẫu nhiên từ vị trí của khối hình trươcs nó.
+
+```Swift
+func newShape() -> (fallingShape:Shape?, nextShape:Shape?) {
+fallingShape = nextShape
+nextShape = Shape.random(PreviewColumn, startingRow: PreviewRow)
+fallingShape?.moveTo(StartingColumn, row: StartingRow)
+return (fallingShape, nextShape)
+}
+```
+
+Ta sẽ tìm cách hiển thị những khối hình và chuyển động của nó trên màn hình bằng cách thêm 1 số phương thức vào `GameScene.swift`. Đầu tiên ta đơn giản chỉ
+định nghĩa kích thước của mỗi điểm ảnh của khối hình, như trường hợp của chúng ta thì sẽ là 20 x 20, thấp hơn  độ phân giải mặc định của mỗi khối hình
+
+```Swift
+let BlockSize:CGFloat = 20.0
+```
+
+Tiếp đến ta sẽ khai báo 1 cặp SKNode coi như 1 lớp trên của các hành động trên màn hình game. `gameLayer` là lớp bên trên lớp hình nền và `shapeLayer` là lớp trên cùng.
+
+```Swift
+let gameLayer = SKNode()
+let shapeLayer = SKNode()
+```
+
+Tiếp theo ta sẽ định nghĩa 1 function quan trọng nhất của lớp `GameScene` là lớp `pointForColumn(Int, Int)`. Hàm này sẽ trả ra giá trị chính xác toạ độ trên màn hình của các khôi block rơi xuống thông qua hàng và cột. Ta cần xác đình điểm chính giữa của khối hình trước khi đưa vào đối tượng `shapeLayer`.
+
+```Swift
+func pointForColumn(column: Int, row: Int) -> CGPoint {
+let x: CGFloat = LayerPosition.x + (CGFloat(column) * BlockSize) + (BlockSize / 2)
+let y: CGFloat = LayerPosition.y - ((CGFloat(row) * BlockSize) + (BlockSize / 2))
+return CGPointMake(x, y)
+}
+```
+
+Bây giờ ta sẽ sử dụng phương thức `pointForColumn(Int, Int)` để đặt những khối hình vào vị trí thích hợp. Ta bắt đầu với `row - 2` và mỗi khối block sẽ rơi xuống nhìn khá trơn tru
+
+```Swift
+sprite.position = pointForColumn(block.column, row:block.row - 2)
+shapeLayer.addChild(sprite)
+block.sprite = sprite
+
+// Animation
+sprite.alpha = 0
+```
+
+Ta sử dụng đối tượng `SKAction` để thao tác một cách trực quan các đối tương `SKNodeSKNode`. Mỗi khối hình sẽ mờ dần đi, cứ khi chuyển động rơi xuống 2 hàng thì nó sẽ mờ đi 70% so với ban đầu. 
+
+```Swift
+let moveAction = SKAction.moveTo(pointForColumn(block.column, row: block.row), duration: NSTimeInterval(0.2))
+moveAction.timingMode = .EaseOut
+let fadeInAction = SKAction.fadeAlphaTo(0.7, duration: 0.4)
+fadeInAction.timingMode = .EaseOut
+sprite.runAction(SKAction.group([moveAction, fadeInAction]))
+```
+
+Cuối cùng ta khai báo 2 phương thức để sử dụng các đối tượng SKAction di chuyển và vẽ lại mỗi khối cho một hình dạng nhất định
+
+```Swift
+func movePreviewShape(shape:Shape, completion:() -> ()) {
+for (idx, block) in enumerate(shape.blocks) {
+let sprite = block.sprite!
+let moveTo = pointForColumn(block.column, row:block.row)
+let moveToAction:SKAction = SKAction.moveTo(moveTo, duration: 0.2)
+moveToAction.timingMode = .EaseOut
+sprite.runAction(
+SKAction.group([moveToAction, SKAction.fadeAlphaTo(1.0, duration: 0.2)]), completion:nil)
+}
+runAction(SKAction.waitForDuration(0.2), completion: completion)
+}
+
+func redrawShape(shape:Shape, completion:() -> ()) {
+for (idx, block) in enumerate(shape.blocks) {
+let sprite = block.sprite!
+let moveTo = pointForColumn(block.column, row:block.row)
+let moveToAction:SKAction = SKAction.moveTo(moveTo, duration: 0.05)
+moveToAction.timingMode = .EaseOut
+sprite.runAction(moveToAction, completion: nil)
+}
+runAction(SKAction.waitForDuration(0.05), completion: completion)
+}
+```
+
+Sau khi hoàn thành việc thiết kế hình ảnh, thêm logic thì giờ viêc ta cần làm là kết nối chúng với lớp giao diện người dùng `GameViewController` . việc trước tiên là định nghĩa thêm biến swiftris với kiểu `Swiftris` mà ta đã định nghĩa ở trên
+
+```Swift
+var swiftris:Swiftris!
+```
+
+Ta set 1 closure cho thuộc tính `tick` của `GameScene.swift`. Ở đây ta sẽ dùng 1 function `didTick()` tạp chuyển động cho các khối rơi xuống từng hàng một và sau đó yêu cầu GameScene để vẽ lại hình dạng tại vị trí mới.
+
+```Swift
+func didTick() {
+swiftris.fallingShape?.lowerShapeByOneRow()
+scene.redrawShape(swiftris.fallingShape!, completion: {})
+}
+```
+
+```Swift
+scene.addPreviewShapeToScene(swiftris.nextShape!) {
+self.swiftris.nextShape?.moveTo(StartingColumn, row: StartingRow)
+self.scene.movePreviewShape(self.swiftris.nextShape!) {
+let nextShapes = self.swiftris.newShape()
+self.scene.startTicking()
+self.scene.addPreviewShapeToScene(nextShapes.nextShape!) {}
+}
+}
+```
+
+Giờ thì ta thử chạy ứng dụng xvà xe thành quả ta đã đạt được :D
+
+![Image](http://i.gyazo.com/afa5b010e843e5af0078e0e559eaf674.png)
+
+
 

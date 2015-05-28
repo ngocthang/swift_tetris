@@ -30,6 +30,13 @@
 		FCA45A7F1A4D5A410051161B /* gameboard@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FCA45A791A4D5A410051161B /* gameboard@2x.png */; };
 		FCA45A801A4D5A410051161B /* whitebg.png in Resources */ = {isa = PBXBuildFile; fileRef = FCA45A7A1A4D5A410051161B /* whitebg.png */; };
 		FCA45A811A4D5A410051161B /* whitebg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = FCA45A7B1A4D5A410051161B /* whitebg@2x.png */; };
+		FCBA5A931B16CE65007F45EA /* Swiftris.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A921B16CE65007F45EA /* Swiftris.swift */; };
+		FCBA5A951B16CF75007F45EA /* TShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A941B16CF75007F45EA /* TShape.swift */; };
+		FCBA5A971B16CFDC007F45EA /* LineShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A961B16CFDC007F45EA /* LineShape.swift */; };
+		FCBA5A991B16D005007F45EA /* LShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A981B16D005007F45EA /* LShape.swift */; };
+		FCBA5A9B1B16D04C007F45EA /* JShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A9A1B16D04C007F45EA /* JShape.swift */; };
+		FCBA5A9D1B16D06E007F45EA /* SShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A9C1B16D06E007F45EA /* SShape.swift */; };
+		FCBA5A9F1B16D090007F45EA /* ZShape.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCBA5A9E1B16D090007F45EA /* ZShape.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +77,13 @@
 		FCA45A791A4D5A410051161B /* gameboard@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "gameboard@2x.png"; sourceTree = "<group>"; };
 		FCA45A7A1A4D5A410051161B /* whitebg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = whitebg.png; sourceTree = "<group>"; };
 		FCA45A7B1A4D5A410051161B /* whitebg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "whitebg@2x.png"; sourceTree = "<group>"; };
+		FCBA5A921B16CE65007F45EA /* Swiftris.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Swiftris.swift; sourceTree = "<group>"; };
+		FCBA5A941B16CF75007F45EA /* TShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TShape.swift; sourceTree = "<group>"; };
+		FCBA5A961B16CFDC007F45EA /* LineShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineShape.swift; sourceTree = "<group>"; };
+		FCBA5A981B16D005007F45EA /* LShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LShape.swift; sourceTree = "<group>"; };
+		FCBA5A9A1B16D04C007F45EA /* JShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JShape.swift; sourceTree = "<group>"; };
+		FCBA5A9C1B16D06E007F45EA /* SShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SShape.swift; sourceTree = "<group>"; };
+		FCBA5A9E1B16D090007F45EA /* ZShape.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZShape.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,7 +137,14 @@
 				FC7E4EFB1A500481006233D4 /* Array2D.swift */,
 				FC308B001AC7A72900CE19D9 /* Block.swift */,
 				FC7322011AF0954C00EDFEF2 /* Shape.swift */,
+				FCBA5A941B16CF75007F45EA /* TShape.swift */,
+				FCBA5A961B16CFDC007F45EA /* LineShape.swift */,
+				FCBA5A981B16D005007F45EA /* LShape.swift */,
+				FCBA5A9A1B16D04C007F45EA /* JShape.swift */,
+				FCBA5A9C1B16D06E007F45EA /* SShape.swift */,
+				FCBA5A9E1B16D090007F45EA /* ZShape.swift */,
 				FC7322031AF095C500EDFEF2 /* SquareShape.swift */,
+				FCBA5A921B16CE65007F45EA /* Swiftris.swift */,
 			);
 			path = first_game;
 			sourceTree = "<group>";
@@ -284,11 +305,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				FC7322041AF095C500EDFEF2 /* SquareShape.swift in Sources */,
+				FCBA5A971B16CFDC007F45EA /* LineShape.swift in Sources */,
 				FCA45A4A1A4D58D00051161B /* GameScene.swift in Sources */,
 				FC7322021AF0954C00EDFEF2 /* Shape.swift in Sources */,
+				FCBA5A9D1B16D06E007F45EA /* SShape.swift in Sources */,
 				FC7E4EFC1A500481006233D4 /* Array2D.swift in Sources */,
+				FCBA5A931B16CE65007F45EA /* Swiftris.swift in Sources */,
+				FCBA5A991B16D005007F45EA /* LShape.swift in Sources */,
 				FC308B011AC7A72900CE19D9 /* Block.swift in Sources */,
+				FCBA5A951B16CF75007F45EA /* TShape.swift in Sources */,
+				FCBA5A9F1B16D090007F45EA /* ZShape.swift in Sources */,
 				FCA45A4C1A4D58D00051161B /* GameViewController.swift in Sources */,
+				FCBA5A9B1B16D04C007F45EA /* JShape.swift in Sources */,
 				FCA45A461A4D58D00051161B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
