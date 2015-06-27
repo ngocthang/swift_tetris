@@ -40,6 +40,7 @@ enum Orientation: Int, Printable {
         }
         return Orientation(rawValue:rotated)!
     }
+    
 }
 
 let NumShapeTypes: UInt32 = 7
@@ -120,8 +121,32 @@ class Shape: Hashable, Printable {
         }
     }
     
+    final func rotateClockwise() {
+        let newOrientation = Orientation.rotate(orientation, clockwise: true)
+        rotateBlocks(newOrientation)
+        orientation = newOrientation
+    }
+    
+    final func rotateCounterClockwise() {
+        let newOrientation = Orientation.rotate(orientation, clockwise: false)
+        rotateBlocks(newOrientation)
+        orientation = newOrientation
+    }
+    
     final func lowerShapeByOneRow() {
         shiftBy(0, rows:1)
+    }
+    
+    final func raiseShapeByOneRow() {
+        shiftBy(0, rows:-1)
+    }
+    
+    final func shiftRightByOneColumn() {
+        shiftBy(1, rows:0)
+    }
+    
+    final func shiftLeftByOneColumn() {
+        shiftBy(-1, rows:0)
     }
     
     final func shiftBy(columns: Int, rows: Int) {
